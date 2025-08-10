@@ -8,8 +8,8 @@ import { addUser, getUser } from "../controller/user-controller.js";
 import { newMessage, getMessage } from "../controller/message-controller.js";
 import { uploadImage, getImage } from "../controller/image-controller.js";
 
-// import upload from "./upload.js";
-// import Upload from "../utils/upload.js"
+// import Upload from "./upload.js";
+import Upload from "../utils/upload.js"
 
 const route = express.Router();
 

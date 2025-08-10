@@ -1,32 +1,27 @@
-import express from "express";
-import bodyParser from "body-parser";
-import cors from "cors";
+import multer from "multer";
+import { GridFsStorage } from "multer-gridfs-storage";
+
 import dotenv from "dotenv";
 
-import Connection from "../database/db.js";
-import route from "../routes/route.js";
-
 dotenv.config();
-const app = express();
-
-const PORT = 8000;
 
 const username = process.env.DB_USERNAME;
 const password = process.env.DB_PASSWORD;
 
-Connection(username, password);
+const storage = new GridFsStorage({
+  url: `mongodb://${username}:${password}@chatapp-shard-00-00.1lequ.mongodb.net:27017,chatapp-shard-00-01.1lequ.mongodb.net:27017,chatapp-shard-00-02.1lequ.mongodb.net:27017/WHATSAPPCLONE?ssl=true&replicaSet=atlas-78i8sb-shard-0&authSource=admin&retryWrites=true&w=majority`,
+  options: { useNewUrlParser: true },
+  file: (request, file) => {
+    const match = ["image/png", "image/jpg"];
 
-// Middlewares
-app.use(bodyParser.json({ extended: true }));
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(cors());
+    if (match.indexOf(file.memeType) === -1)
+      return `${Date.now()}-blog-${file.originalname}`;
 
-// Routes
-app.use("/", route);
-// Server start
-app.listen(PORT, () =>
-  console.log(`Server is running successfully on PORT ${PORT}`)
-);
+    return {
+      bucketName: "photos",
+      filename: `${Date.now()}-blog-${file.originalname}`,
+    };
+  },
+});
 
-
-export default Upload ;
+export default multer({ storage });
